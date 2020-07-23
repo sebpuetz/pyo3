@@ -1,0 +1,16 @@
+[package]
+authors = ["PyO3 Authors"]
+name = "union"
+version = "0.1.0"
+description = ""
+edition = "2018"
+
+[dependencies]
+
+[dependencies.pyo3]
+path = "../../"
+features = ["extension-module"]
+
+[lib]
+name = "union"
+crate-type = ["cdylib"]
