@@ -5,7 +5,7 @@
 extern crate proc_macro;
 use proc_macro::TokenStream;
 use pyo3_derive_backend::{
-    build_py_class, build_py_function, build_py_methods, build_py_proto, build_wrapper_enum,
+    build_py_class, build_py_function, build_py_methods, build_py_proto, derive_from_py,
     get_doc, process_functions_in_module, py_init, PyClassArgs, PyFunctionAttr,
 };
 use quote::quote;
@@ -92,12 +92,11 @@ pub fn pyfunction(attr: TokenStream, input: TokenStream) -> TokenStream {
     .into()
 }
 
-#[proc_macro_attribute]
-pub fn union(_attr: TokenStream, item: TokenStream) -> TokenStream {
-    let mut ast = parse_macro_input!(item as syn::ItemEnum);
-    let expanded = build_wrapper_enum(&mut ast).unwrap_or_else(|e| e.to_compile_error());
+#[proc_macro_derive(FromPyObject, attributes(rename, exact))]
+pub fn derive_from_py_object(item: TokenStream) -> TokenStream {
+    let mut ast = parse_macro_input!(item as syn::DeriveInput);
+    let expanded = derive_from_py(&mut ast).unwrap_or_else(|e| e.to_compile_error());
     quote!(
-        #ast
         #expanded
     )
     .into()
